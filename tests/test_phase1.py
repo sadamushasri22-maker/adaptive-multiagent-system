@@ -150,8 +150,9 @@ def test_llm_client_rate_limit_retry():
 
     mock_client.chat.completions.create.side_effect = [rate_err, success_resp]
 
-    with patch("src.llm_client.get_client", return_value=mock_client):
-        res = call_agent("Solve 6 * 7", initial_backoff=0.01)
+    with patch("src.llm_client.client", mock_client):
+        res = call_agent("Solve 6 * 7")
         assert res["text"] == "FINAL ANSWER: 42"
         assert res["tokens"] == 50
         assert mock_client.chat.completions.create.call_count == 2
+
